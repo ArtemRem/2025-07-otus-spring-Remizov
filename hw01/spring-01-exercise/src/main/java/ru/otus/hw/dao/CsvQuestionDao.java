@@ -27,7 +27,6 @@ public class CsvQuestionDao implements QuestionDao {
         { if (inputStream == null) {
             throw new IllegalArgumentException("File not found: " + testFileName);
         }
-
         List<QuestionDto> questionDtos = new CsvToBeanBuilder(inputStreamReader)
                 .withType(QuestionDto.class)
                 .withSkipLines(1)
