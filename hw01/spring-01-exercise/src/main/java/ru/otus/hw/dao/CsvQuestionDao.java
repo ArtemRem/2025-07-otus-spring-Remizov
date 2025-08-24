@@ -5,7 +5,9 @@ import lombok.RequiredArgsConstructor;
 import ru.otus.hw.config.TestFileNameProvider;
 import ru.otus.hw.dao.dto.QuestionDto;
 import ru.otus.hw.domain.Question;
+import ru.otus.hw.exceptions.QuestionReadException;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
@@ -20,11 +22,12 @@ public class CsvQuestionDao implements QuestionDao {
 
         String testFileName = fileNameProvider.getTestFileName();
         ClassLoader classLoader = getClass().getClassLoader();
-        InputStream inputStream = classLoader.getResourceAsStream(testFileName);
-        if (inputStream == null) {
+        try (InputStream inputStream = classLoader.getResourceAsStream(testFileName);
+        InputStreamReader inputStreamReader = new InputStreamReader(inputStream))
+        { if (inputStream == null) {
             throw new IllegalArgumentException("File not found: " + testFileName);
         }
-        InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+
         List<QuestionDto> questionDtos = new CsvToBeanBuilder(inputStreamReader)
                 .withType(QuestionDto.class)
                 .withSkipLines(1)
@@ -33,6 +36,8 @@ public class CsvQuestionDao implements QuestionDao {
                 .parse();
 
 
-        return questionDtos.stream().map(QuestionDto::toDomainObject).toList();
-    }
+        return questionDtos.stream().map(QuestionDto::toDomainObject).toList();}
+        catch (IOException e) {
+            throw new QuestionReadException("Error reading from CSV", e);
+        }    }
 }
