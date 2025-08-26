@@ -22,6 +22,7 @@ public class CsvQuestionDao implements QuestionDao {
 
         String testFileName = fileNameProvider.getTestFileName();
         ClassLoader classLoader = getClass().getClassLoader();
+
         try (InputStream inputStream = classLoader.getResourceAsStream(testFileName);
         InputStreamReader inputStreamReader = new InputStreamReader(inputStream))
         { if (inputStream == null) {
