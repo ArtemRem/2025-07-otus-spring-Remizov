@@ -20,17 +20,14 @@ public class TestServiceImpl implements TestService {
         ioService.printFormattedLine("Please answer the questions below%n");
         var questions = questionDao.findAll();
         var testResult = new TestResult(student);
-        var answerNumber = 1;
 
         for (var question: questions) {
             ioService.printLine("Enter the right answer number");
             ioService.printLine(question.text());
 
-            for (var answer: question.answers()) {
-                ioService.printFormattedLine("\t%s. %s", answerNumber, answer.text());
-                answerNumber++;
-            }
-            answerNumber = 1;
+            for (int i = 0; i < question.answers().size(); i++) {
+                ioService.printFormattedLine("\t%s. %s", i + 1, question.answers().get(i).text());
+                }
             var studentAnswer = ioService.readIntForRange(1, question.answers().size(),
                     "There is no response with this number. Please try again.");
 
